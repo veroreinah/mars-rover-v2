@@ -8,7 +8,21 @@ var roverKata = {
   travelLog: []
 };
 
+var marsGrid = [
+  [null, null, null, "O", null, null, null, null, "O", null],
+  [null, "O", null, "O", null, null, null, null, null, null],
+  ["O", null, null, null, null, null, "O", null, null, null],
+  [null, "O", null, null, null, null, null, null, "O", null],
+  [null, null, null, null, "O", null, null, null, null, "O"],
+  [null, null, "O", "O", null, null, null, null, null, null],
+  [null, "O", null, null, null, null, null, null, null, "O"],
+  [null, null, null, null, null, "O", null, null, "O", null],
+  [null, "O", null, null, null, null, null, "O", null, null],
+  ["O", "O", null, null, null, null, null, null, null, null]
+]
+
 // ======================
+
 function turnLeft(rover){
   switch (rover.direction) {
     case "N":
@@ -48,31 +62,38 @@ function moveForward(rover){
     x: rover.x,
     y: rover.y
   };
+  var moved = false;
 
   switch (rover.direction) {
     case "N":
-      if (rover.y > 0) {
+      if (rover.y > 0 && !checkObstacle(rover.x, rover.y - 1)) {
         rover.y--;
+        moved = true;
       }
       break;
     case "S":
-      if (rover.y < 9) {
+      if (rover.y < 9 && !checkObstacle(rover.x, rover.y + 1)) {
         rover.y++;
+        moved = true;
       }
       break;
     case "E":
-      if (rover.x < 9) {
+      if (rover.x < 9 && !checkObstacle(rover.x + 1, rover.y)) {
         rover.x++;
+        moved = true;
       } 
       break;
     case "W":
-      if (rover.x > 0) {
+      if (rover.x > 0 && !checkObstacle(rover.x - 1, rover.y)) {
         rover.x--;
+        moved = true;
       }
       break;
   }
 
-  rover.travelLog.push(currentRoverPosition);
+  if (moved) {
+    rover.travelLog.push(currentRoverPosition);
+  }
 }
 
 function moveBackward(rover){
@@ -80,37 +101,55 @@ function moveBackward(rover){
     x: rover.x,
     y: rover.y
   };
+  var moved = false;
 
   switch (rover.direction) {
     case "N":
-      if (rover.y < 9) {
+      if (rover.y < 9 && !checkObstacle(rover.x, rover.y + 1)) {
         rover.y++;
+        moved = true;
       }
       break;
     case "S":
-      if (rover.y > 0) {
+      if (rover.y > 0 && !checkObstacle(rover.x, rover.y - 1)) {
         rover.y--;
+        moved = true;
       }
       break;
     case "E":
-      if (rover.x > 0) {
+      if (rover.x > 0 && !checkObstacle(rover.x - 1, rover.y)) {
         rover.x--;
+        moved = true;
       } 
       break;
     case "W":
-      if (rover.x < 9) {
+      if (rover.x < 9 && !checkObstacle(rover.x + 1, rover.y)) {
         rover.x++;
+        moved = true;
       }
       break;
   }
 
-  rover.travelLog.push(currentRoverPosition);
+  if (moved) {
+    rover.travelLog.push(currentRoverPosition);
+  }
 }
 
 function printTravelLog(travelLog) {
   for (var i = 0; i < travelLog.length; i++) {
     console.log("Position " + i + " => x: " + travelLog[i].x + ", y: " + travelLog[i].y);
   }
+}
+
+function checkObstacle(col, row) {
+  var obstacle = false;
+
+  if (marsGrid[row][col] === "O") {
+    obstacle = true;
+    console.log("Obstacle found in row: " + row + ", col: " + col);
+  }
+
+  return obstacle;
 }
 
 function moveRover(commands) {
