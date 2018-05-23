@@ -75,6 +75,38 @@ function moveForward(rover){
   rover.travelLog.push(currentRoverPosition);
 }
 
+function moveBackward(rover){
+  var currentRoverPosition = {
+    x: rover.x,
+    y: rover.y
+  };
+
+  switch (rover.direction) {
+    case "N":
+      if (rover.y < 9) {
+        rover.y++;
+      }
+      break;
+    case "S":
+      if (rover.y > 0) {
+        rover.y--;
+      }
+      break;
+    case "E":
+      if (rover.x > 0) {
+        rover.x--;
+      } 
+      break;
+    case "W":
+      if (rover.x < 9) {
+        rover.x++;
+      }
+      break;
+  }
+
+  rover.travelLog.push(currentRoverPosition);
+}
+
 function printTravelLog(travelLog) {
   for (var i = 0; i < travelLog.length; i++) {
     console.log("Position " + i + " => x: " + travelLog[i].x + ", y: " + travelLog[i].y);
@@ -93,10 +125,13 @@ function moveRover(commands) {
       case "f":
         moveForward(roverKata);
         break;
+      case "b":
+        moveBackward(roverKata);
+        break;
     }
   }
 
   printTravelLog(roverKata.travelLog);
 }
 
-moveRover("rffrfflfrfflffrfflfrffrrffffffffffffflffffff");
+moveRover("rffrfflfrfflffrfflfrffrrffffffffffffflffffffffffffbbbbbbbbbbbbbbbbbbbbbrbbbbbbbbbbbbbbbffff");
