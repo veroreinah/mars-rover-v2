@@ -1,12 +1,36 @@
 // Rover Object Goes Here
 // ======================
 
-var roverKata = {
-  direction: "N",
-  x: 0,
-  y: 0,
-  travelLog: []
-};
+var rovers = [
+  {
+    name: "Rover 0",
+    direction: "N",
+    x: 0,
+    y: 0,
+    travelLog: []
+  },
+  {
+    name: "Rover 1",
+    direction: "N",
+    x: 3,
+    y: 3,
+    travelLog: []
+  },
+  {
+    name: "Rover 2",
+    direction: "N",
+    x: 5,
+    y: 9,
+    travelLog: []
+  },
+  {
+    name: "Rover 3",
+    direction: "N",
+    x: 0,
+    y: 4,
+    travelLog: []
+  }
+];
 
 var marsGrid = [
   [null, null, null, "O", null, null, null, null, "O", null],
@@ -92,6 +116,9 @@ function moveForward(rover){
   }
 
   if (moved) {
+    marsGrid[currentRoverPosition.y][currentRoverPosition.x] = null;
+    marsGrid[rover.y][rover.x] = "R";
+
     rover.travelLog.push(currentRoverPosition);
   }
 }
@@ -131,13 +158,21 @@ function moveBackward(rover){
   }
 
   if (moved) {
+    marsGrid[currentRoverPosition.y][currentRoverPosition.x] = null;
+    marsGrid[rover.y][rover.x] = "R";
+
     rover.travelLog.push(currentRoverPosition);
   }
 }
 
-function printTravelLog(travelLog) {
-  for (var i = 0; i < travelLog.length; i++) {
-    console.log("Position " + i + " => x: " + travelLog[i].x + ", y: " + travelLog[i].y);
+function printTravelLog() {
+  for (var i = 0; i < rovers.length; i++) {
+    console.log("### " + rovers[i].name + "'s travel log ###");
+
+    var travelLog = rovers[i].travelLog;
+    for (var j = 0; j < travelLog.length; j++) {
+      console.log("Position " + j + " => x: " + travelLog[j].x + ", y: " + travelLog[j].y);
+    }
   }
 }
 
@@ -147,30 +182,63 @@ function checkObstacle(col, row) {
   if (marsGrid[row][col] === "O") {
     obstacle = true;
     console.log("Obstacle found in row: " + row + ", col: " + col);
+  } else if (marsGrid[row][col] === "R") {
+    obstacle = true;
+    console.log("Another Rover found in row: " + row + ", col: " + col);
   }
 
   return obstacle;
 }
 
-function moveRover(commands) {
-  for (var i = 0; i < commands.length; i++) {
-    switch (commands[i]) {
-      case "r":
-        turnRight(roverKata);
-        break;
-      case "l":
-        turnLeft(roverKata);
-        break;
-      case "f":
-        moveForward(roverKata);
-        break;
-      case "b":
-        moveBackward(roverKata);
-        break;
+function printGrid() {
+  var gridString = "";
+
+  for (var i = 0; i < marsGrid.length; i++) {
+    for (var j = 0; j < marsGrid[i].length; j++) {
+      if (marsGrid[i][j] === null) {
+        gridString += "- ";
+      } else {
+        gridString += marsGrid[i][j] + " ";
+      }
     }
+
+    gridString += "\n\r";
   }
 
-  printTravelLog(roverKata.travelLog);
+  console.log(gridString);
 }
 
-moveRover("rffrfflfrfflffrfflfrffrrffffffffffffflffffffffffffbbbbbbbbbbbbbbbbbbbbbrbbbbbbbbbbbbbbbffff");
+function moveRover(commands) {
+  // first of all we set the position of the Rovers in the grid
+  for (var j = 0; j < rovers.length; j++) {
+    marsGrid[rovers[j].y][rovers[j].x] = "R";
+  }
+  // printGrid();
+
+  for (var i = 0, k = 0; i < commands.length; i++, k++) {
+    if (k === rovers.length) {
+      k = 0;
+    }
+
+    switch (commands[i]) {
+      case "r":
+        turnRight(rovers[k]);
+        break;
+      case "l":
+        turnLeft(rovers[k]);
+        break;
+      case "f":
+        moveForward(rovers[k]);
+        break;
+      case "b":
+        moveBackward(rovers[k]);
+        break;
+    }
+
+    // printGrid();
+  }
+
+  printTravelLog();
+}
+
+moveRover("rffrfllfffflrrrffffrrfrrlfffffffffffflffffffffffffbbbbbbbbbbbbbbbbbbbbbrbbbbbbbbbbbbqwerfff");
